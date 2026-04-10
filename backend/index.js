@@ -33,6 +33,9 @@ io.on('connection', (socket) => {
     console.log('User language:', data.userLanguage);
     
     try {
+      const result = await handleMessage(data.message, data.userLocation, data.userLanguage, (agentData) => {
+        socket.emit('agent-thinking', agentData);
+      });
       const result = await handleMessage(data.message, data.userLocation, data.userLanguage, socket.id);
       console.log('Sending reply:', result.agent, '-', result.reply?.substring(0, 50));
       if (result.callAmbulance) {

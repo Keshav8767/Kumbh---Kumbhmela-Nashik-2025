@@ -123,14 +123,17 @@ const foundCases = Array.from({ length: 50 }, (_, i) => {
 
 async function seed() {
   try {
-    if (!process.env.MONGODB_URI || process.env.MONGODB_URI === 'mongodb+srv://...') {
-      console.log('❌ MongoDB URI not configured in .env file');
-      console.log('   Please set MONGODB_URI to a valid MongoDB connection string');
-      process.exit(1);
+    if (mongoose.connection.readyState !== 1) {
+      if (!process.env.MONGODB_URI || process.env.MONGODB_URI === 'mongodb+srv://...') {
+        console.log('❌ MongoDB URI not configured in .env file, and no active connection found.');
+        if (require.main === module) process.exit(1);
+        throw new Error("No active MongoDB connection and no URI provided.");
+      }
+      await mongoose.connect(process.env.MONGODB_URI);
+      console.log('✅ Connected to MongoDB');
+    } else {
+      console.log('✅ Reusing existing MongoDB connection for seeding');
     }
-
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ Connected to MongoDB');
 
     console.log('🗑️  Clearing existing data...');
     await Zone.deleteMany({});
@@ -168,11 +171,21 @@ async function seed() {
     console.log(`   Hotels: ${hotels.length}`);
     console.log(`   Found Cases: ${foundCases.length}`);
 
-    process.exit(0);
+    if (require.main === module) {
+      process.exit(0);
+    }
+    return true;
   } catch (error) {
     console.error('❌ Seeding failed:', error);
-    process.exit(1);
+    if (require.main === module) {
+      process.exit(1);
+    }
+    throw error;
   }
 }
 
-seed();
+if (require.main === module) {
+  seed();
+}
+
+module.exports = { seed, zones, medicalPosts, volunteers, hotels, foundCases };

@@ -252,15 +252,34 @@ async function generalAgent(message) {
   return { agent: 'General Agent', reply: response.choices[0].message.content, data: null };
 }
 
+// Main orchestrator
+async function handleMessage(message, userLocation = null, userLanguage = 'en', onAgentAssigned = null) {
 // ─── Main orchestrator ────────────────────────────────────────────────────────
 async function handleMessage(message, userLocation = null, userLanguage = 'en', userId = 'default') {
   try {
     const detectedLang = await detectLanguage(message);
     const sourceLang = userLanguage || detectedLang;
     let englishMessage = message;
+
+    if (sourceLang !== 'en') {
+      englishMessage = await translateText(message, 'en');
+    }
+    
+    const agentType = await routeToAgent(englishMessage);
+    
+    if (onAgentAssigned) {
+      let prettyName = 'General AI Assistant';
+      if (agentType === 'medical') prettyName = 'Medical Agent';
+      else if (agentType === 'navigation') prettyName = 'Navigation Agent';
+      else if (agentType === 'lost-and-found') prettyName = 'Lost & Found Agent';
+      onAgentAssigned({ type: agentType, name: prettyName });
+    }
+    
+
     if (sourceLang !== 'en') englishMessage = await translateText(message, 'en');
 
     const agentType = await routeToAgent(englishMessage, userId);
+
 
     let result;
     switch (agentType) {
