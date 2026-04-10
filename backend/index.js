@@ -10,15 +10,16 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST']
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], credentials: true }));
 app.use(express.json());
 
 // Socket.io connection handler
@@ -35,7 +36,11 @@ io.on('connection', (socket) => {
       const result = await handleMessage(data.message, data.userLocation, data.userLanguage, (agentData) => {
         socket.emit('agent-thinking', agentData);
       });
+      const result = await handleMessage(data.message, data.userLocation, data.userLanguage, socket.id);
       console.log('Sending reply:', result.agent, '-', result.reply?.substring(0, 50));
+      if (result.callAmbulance) {
+        socket.emit('ambulance-called', { contact: result.ambulanceContact });
+      }
       socket.emit('agent-reply', result);
     } catch (error) {
       console.error('Error handling message:', error);

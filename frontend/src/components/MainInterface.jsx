@@ -3,23 +3,38 @@ import { useSocket } from '../hooks/useSocket';
 import MapMessage from './MapMessage';
 import LocationCard from './LocationCard';
 import TypingIndicator from './TypingIndicator';
-import RouteMapMessage from './RouteMapMessage';
+import HotelSwiper from './HotelCard';
 import './MainInterface.css';
 
 function MainInterface({ onNavigate }) {
+
   const { isConnected, lastReply, activeAgent, sendMessage } = useSocket();
+
+  const { isConnected, lastReply, sendMessage, ambulanceAlert } = useSocket();
+
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [showAmbulanceModal, setShowAmbulanceModal] = useState(false);
+  const [ambulanceContact, setAmbulanceContact] = useState('108');
   const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
 
   const bottomRef = useRef(null);
   const scrollAreaRef = useRef(null);
   const prevReplyRef = useRef(null);
+
+  useEffect(() => {
+    if (ambulanceAlert) {
+      setAmbulanceContact(ambulanceAlert.contact || '108');
+      setShowAmbulanceModal(true);
+      // Auto-trigger call
+      window.location.href = `tel:${ambulanceAlert.contact || '108'}`;
+    }
+  }, [ambulanceAlert]);
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -41,10 +56,29 @@ function MainInterface({ onNavigate }) {
       setTimeout(() => setIsShaking(false), 400);
       return;
     }
-    setMessages((prev) => [...prev, { role: 'user', text: textToSend }]);
-    setIsTyping(true);
-    sendMessage(textToSend, userLocation, selectedLanguage);
-    setMessage('');
+
+    const lower = textToSend.toLowerCase();
+    const isHotelRequest = lower.includes('hotel') || lower.includes('stay') || lower.includes('room') || lower.includes('accommodation') || lower.includes('lodge');
+
+    const doSend = (loc) => {
+      setMessages((prev) => [...prev, { role: 'user', text: textToSend }]);
+      setIsTyping(true);
+      sendMessage(textToSend, loc, selectedLanguage);
+      setMessage('');
+    };
+
+    if (isHotelRequest && !userLocation && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          setUserLocation(loc);
+          doSend(loc);
+        },
+        () => doSend(null)
+      );
+    } else {
+      doSend(userLocation);
+    }
   };
 
   const startVoiceInput = () => {
@@ -454,6 +488,10 @@ function MainInterface({ onNavigate }) {
                         </div>
                       )}
                       {msg.text || msg.reply}
+
+                      {msg.hotels && msg.hotels.length > 0 && (
+                        <HotelSwiper hotels={msg.hotels} />
+                      )}
                       
                       {msg.showRoute && msg.routeData && (
                         <RouteMapMessage 
@@ -547,6 +585,28 @@ function MainInterface({ onNavigate }) {
               {renderInputBar(false)}
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {showAmbulanceModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+          <div style={{ background: '#fff', borderRadius: '16px', padding: '32px 24px', maxWidth: '320px', width: '90%', textAlign: 'center' }}>
+            <div style={{ fontSize: '3rem' }}>🚨</div>
+            <h2 style={{ color: '#dc2626', margin: '8px 0' }}>Ambulance Alert!</h2>
+            <p style={{ color: '#374151', margin: '0 0 20px' }}>Calling <strong>{ambulanceContact}</strong>. Stay calm, help is on the way.</p>
+            <a
+              href={`tel:${ambulanceContact}`}
+              style={{ display: 'block', background: '#dc2626', color: '#fff', padding: '14px', borderRadius: '10px', fontWeight: '700', fontSize: '1.1rem', textDecoration: 'none', marginBottom: '12px' }}
+            >
+              📞 Call {ambulanceContact}
+            </a>
+            <button
+              onClick={() => setShowAmbulanceModal(false)}
+              style={{ background: 'none', border: '1px solid #d1d5db', borderRadius: '8px', padding: '10px 24px', cursor: 'pointer', color: '#6b7280', width: '100%' }}
+            >
+              Dismiss
+            </button>
           </div>
         </div>
       )}

@@ -9,6 +9,7 @@ const hotelSchema = new mongoose.Schema({
     lng: { type: Number, required: true }
   },
   type: { type: String, enum: ['budget', 'mid-range', 'luxury', 'lodge', 'dharamshala'], default: 'mid-range' },
+  images: [String],
   amenities: [String],
   priceRange: {
     min: Number,
