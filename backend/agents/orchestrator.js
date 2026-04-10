@@ -283,7 +283,7 @@ Be concise, helpful, and culturally sensitive.`;
 }
 
 // Main orchestrator
-async function handleMessage(message, userLocation = null, userLanguage = 'en') {
+async function handleMessage(message, userLocation = null, userLanguage = 'en', onAgentAssigned = null) {
   try {
     // Detect language if not provided
     const detectedLang = await detectLanguage(message);
@@ -296,6 +296,14 @@ async function handleMessage(message, userLocation = null, userLanguage = 'en') 
     }
     
     const agentType = await routeToAgent(englishMessage);
+    
+    if (onAgentAssigned) {
+      let prettyName = 'General AI Assistant';
+      if (agentType === 'medical') prettyName = 'Medical Agent';
+      else if (agentType === 'navigation') prettyName = 'Navigation Agent';
+      else if (agentType === 'lost-and-found') prettyName = 'Lost & Found Agent';
+      onAgentAssigned({ type: agentType, name: prettyName });
+    }
     
     let result;
     switch (agentType) {

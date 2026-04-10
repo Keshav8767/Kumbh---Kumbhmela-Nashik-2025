@@ -24,13 +24,32 @@ body, html {
 .hero-image-half {
   width: 100%;
   flex: 1;
-  background-image: linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url('/image2.png'); 
-  background-size: cover; 
+  background-image: linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url('/kumbh.png');
+  background-size: cover;
   background-position: center 30%;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   padding-top: 60px;
+}
+
+.navbar {
+  width: 100%;
+  height: 70px;
+  background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('/image2.png');
+  background-size: cover;
+  background-position: center 30%;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.navbar-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
 .app-container {
@@ -74,7 +93,7 @@ body, html {
 
 @media (min-width: 1024px) {
   .hero-image-half {
-    background-image: linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url('/image.png');
+    background-image: linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url('/kumbh.png');
     background-size: cover;
     background-position: center;
     padding-top: 80px;

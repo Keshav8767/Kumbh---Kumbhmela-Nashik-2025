@@ -7,7 +7,7 @@ import RouteMapMessage from './RouteMapMessage';
 import './MainInterface.css';
 
 function MainInterface({ onNavigate }) {
-  const { isConnected, lastReply, sendMessage } = useSocket();
+  const { isConnected, lastReply, activeAgent, sendMessage } = useSocket();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
@@ -119,12 +119,250 @@ function MainInterface({ onNavigate }) {
   return (
     <div className="app-container" style={{ overflowY: 'auto', position: 'relative' }}>
 
+      {/* Mobile Layout */}
+      {!hasStartedChatting && (
+        <div className="mobile-layout">
+          <div className="mobile-navbar">
+            <div className="mobile-navbar-icons">
+              <div className="mobile-navbar-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              </div>
+              <div className="mobile-navbar-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
+              <div className="mobile-navbar-icon notification-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <span className="notification-badge">3</span>
+              </div>
+            </div>
+            <h2 className="mobile-navbar-title">KUMBH</h2>
+          </div>
+
+          {/* Emergency Strip - Mobile */}
+          <div className="emergency-strip">
+            <div className="suggestion-marquee">
+              <div className="marquee-content">
+                <div className="suggestion-chip">🚨 Emergency: 108</div>
+                <div className="suggestion-chip">👮 Police: 100</div>
+                <div className="suggestion-chip">🚒 Fire: 101</div>
+                <div className="suggestion-chip">🏥 Ambulance: 102</div>
+                <div className="suggestion-chip">👶 Child Helpline: 1098</div>
+                <div className="suggestion-chip">👩 Women Helpline: 1091</div>
+                <div className="suggestion-chip">🚨 Emergency: 108</div>
+                <div className="suggestion-chip">👮 Police: 100</div>
+                <div className="suggestion-chip">🚒 Fire: 101</div>
+                <div className="suggestion-chip">🏥 Ambulance: 102</div>
+                <div className="suggestion-chip">👶 Child Helpline: 1098</div>
+                <div className="suggestion-chip">👩 Women Helpline: 1091</div>
+              </div>
+            </div>
+          </div>
+          <div className="mobile-body" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', minHeight: '60vh' }}>
+            <div className="mobile-input-wrap" style={{ marginTop: '0', marginBottom: '8px', width: '100%' }}>{renderInputBar(true)}</div>
+            <div className="suggested-questions">
+              <span onClick={() => handleSuggestionClick("When is the next Shahi Snan?")}>"When is the next Shahi Snan?"</span>
+              <span onClick={() => handleSuggestionClick("Where is the lost and found?")}>"Where is the lost and found?"</span>
+              <span onClick={() => handleSuggestionClick("How to reach Triveni Sangam?")}>"How to reach Triveni Sangam?"</span>
+            </div>
+          </div>
+
+          {/* Emergency Strip - Mobile */}
+          <div className="emergency-strip">
+            <div className="suggestion-marquee">
+              <div className="marquee-content">
+                <div className="suggestion-chip">🚨 Emergency: 108</div>
+                <div className="suggestion-chip">👮 Police: 100</div>
+                <div className="suggestion-chip">🚒 Fire: 101</div>
+                <div className="suggestion-chip">🏥 Ambulance: 102</div>
+                <div className="suggestion-chip">👶 Child Helpline: 1098</div>
+                <div className="suggestion-chip">👩 Women Helpline: 1091</div>
+                <div className="suggestion-chip">🚨 Emergency: 108</div>
+                <div className="suggestion-chip">👮 Police: 100</div>
+                <div className="suggestion-chip">🚒 Fire: 101</div>
+                <div className="suggestion-chip">🏥 Ambulance: 102</div>
+                <div className="suggestion-chip">👶 Child Helpline: 1098</div>
+                <div className="suggestion-chip">👩 Women Helpline: 1091</div>
+              </div>
+            </div>
+          </div>
+          
+          {/* What We Provide Section - Mobile */}
+          <div className="what-we-provide">
+            <h3 className="section-title">What We Provide</h3>
+            <div className="features-grid">
+              <div className="feature-card" onClick={() => handleSuggestionClick("Tell me about Mahakumbh")}>
+                <span className="feature-icon">🤖</span>
+                <span className="feature-text">AI Companion</span>
+              </div>
+              <div className="feature-card" onClick={() => handleSuggestionClick("How do I reach the Triveni Sangam?")}>
+                <span className="feature-icon">🗺️</span>
+                <span className="feature-text">Maps & Routes</span>
+              </div>
+              <div className="feature-card" onClick={() => handleSuggestionClick("Where is the nearest medical camp?")}>
+                <span className="feature-icon">🏥</span>
+                <span className="feature-text">SOS & Medical</span>
+              </div>
+              <div className="feature-card" onClick={() => handleSuggestionClick("Help me find a lost person")}>
+                <span className="feature-icon">🔍</span>
+                <span className="feature-text">Lost & Found</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Mobile minimal video section below the hero body */}
+          <div className="minimal-video-strip">
+            <div className="minimal-video-header">
+              <span className="minimal-video-title">Kumbh Mela Videos</span>
+            </div>
+            <div className="minimal-video-scroll">
+              {[
+                { id: 'fSTgOP_q_E0', label: 'Kumbh Mela Guide' },
+                { id: 'ouUZ8R2F810', label: 'Nashik Vlog' },
+                { id: 'f7Y7A9Rgn-A', label: 'Overview' },
+              ].map((v) => (
+                <div key={v.id} className="minimal-video-card">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${v.id}`}
+                    title={v.label}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                  <div className="minimal-video-label">{v.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section - Always visible but slides up */}
-      <div className={`pristine-layout ${hasStartedChatting ? 'slide-up' : ''}`}>
+      <div className={`pristine-layout desktop-only ${hasStartedChatting ? 'slide-up' : ''}`}>
+
+        {/* Desktop Navbar */}
+        <div className="desktop-navbar">
+          <h2 className="desktop-navbar-title">KUMBH</h2>
+          <div className="desktop-navbar-icons">
+            <div className="desktop-navbar-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            </div>
+            <div className="desktop-navbar-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div className="desktop-navbar-icon notification-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span className="desktop-notification-badge">3</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Emergency Strip - Desktop */}
+        <div className="emergency-strip desktop-emergency-strip">
+          <div className="suggestion-marquee">
+            <div className="marquee-content">
+              <div className="suggestion-chip">🚨 Emergency: 108</div>
+              <div className="suggestion-chip">👮 Police: 100</div>
+              <div className="suggestion-chip">🚒 Fire: 101</div>
+              <div className="suggestion-chip">🏥 Ambulance: 102</div>
+              <div className="suggestion-chip">👶 Child Helpline: 1098</div>
+              <div className="suggestion-chip">👩 Women Helpline: 1091</div>
+              <div className="suggestion-chip">🚨 Emergency: 108</div>
+              <div className="suggestion-chip">👮 Police: 100</div>
+              <div className="suggestion-chip">🚒 Fire: 101</div>
+              <div className="suggestion-chip">🏥 Ambulance: 102</div>
+              <div className="suggestion-chip">👶 Child Helpline: 1098</div>
+              <div className="suggestion-chip">👩 Women Helpline: 1091</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Body */}
+        <div className="desktop-body" style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
+          <div className="desktop-input-wrap" style={{ marginTop: '0', maxWidth: '800px', width: '100%', alignSelf: 'center', marginBottom: '12px' }}>{renderInputBar(true)}</div>
+          <div className="suggested-questions">
+            <span onClick={() => handleSuggestionClick("When is the next Shahi Snan?")}>"When is the next Shahi Snan?"</span>
+            <span onClick={() => handleSuggestionClick("Where is the lost and found?")}>"Where is the lost and found?"</span>
+            <span onClick={() => handleSuggestionClick("How to reach Triveni Sangam?")}>"How to reach Triveni Sangam?"</span>
+            <span onClick={() => handleSuggestionClick("Where are the medical camps?")}>"Where are the medical camps?"</span>
+          </div>
+        </div>
+
+        {/* What We Provide Section - Desktop */}
+        <div className="what-we-provide desktop-features-section">
+          <h3 className="section-title">What We Provide</h3>
+          <div className="features-grid">
+            <div className="feature-card" onClick={() => handleSuggestionClick("Tell me about Mahakumbh")}>
+              <span className="feature-icon">🤖</span>
+              <span className="feature-text">AI Companion</span>
+              <span className="feature-desc">Multilingual voice & chat support for your journey</span>
+            </div>
+            <div className="feature-card" onClick={() => handleSuggestionClick("How do I reach the Triveni Sangam?")}>
+              <span className="feature-icon">🗺️</span>
+              <span className="feature-text">Interactive Maps</span>
+              <span className="feature-desc">Live routing to Ghats, camps, and transit hubs</span>
+            </div>
+            <div className="feature-card" onClick={() => handleSuggestionClick("Where is the nearest medical camp?")}>
+              <span className="feature-icon">🏥</span>
+              <span className="feature-text">SOS & Triage</span>
+              <span className="feature-desc">Instant connection to nearby medical facilities</span>
+            </div>
+            <div className="feature-card" onClick={() => handleSuggestionClick("Help me find a lost person")}>
+              <span className="feature-icon">🔍</span>
+              <span className="feature-text">Lost & Found</span>
+              <span className="feature-desc">Real-time reporting and finding missing persons</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Minimal Video Section placed right above Desktop Footer */}
+        <div className="minimal-video-strip">
+          <div className="minimal-video-header">
+            <span className="minimal-video-title">Kumbh Mela Videos</span>
+          </div>
+          <div className="minimal-video-scroll">
+            {[
+              { id: 'fSTgOP_q_E0', label: 'Kumbh Mela Guide' },
+              { id: 'ouUZ8R2F810', label: 'Nashik Vlog' },
+              { id: 'f7Y7A9Rgn-A', label: 'Overview' },
+            ].map((v) => (
+              <div key={v.id} className="minimal-video-card">
+                <iframe
+                  src={`https://www.youtube.com/embed/${v.id}`}
+                  title={v.label}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+                <div className="minimal-video-label">{v.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop Footer */}
+        <div className="desktop-footer">
+          <div className="footer-content">
+            <div className="footer-section">
+              <h4>About Kumbh</h4>
+              <p>The largest spiritual gathering on Earth</p>
+            </div>
+            <div className="footer-section">
+              <h4>Quick Links</h4>
+              <p>Events | Schedule | Map | Contact</p>
+            </div>
+            <div className="footer-section">
+              <h4>Contact</h4>
+              <p>Email: info@kumbh2025.in</p>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>© 2025 Kumbh Mela Nashik. All rights reserved.</p>
+          </div>
+        </div>
 
         {/* Top Half Image */}
-        <div className="hero-image-half">
-          <div className="constrained-wrapper">
+        <div className="hero-image-half" style={{display: 'none'}}>
+          <div className="constrained-wrapper" style={{display: 'none'}}>
             <div className="top-header">
               <div className="lang-selector" onClick={() => setShowLanguageMenu(!showLanguageMenu)}>
                 <span>{selectedLanguage === 'en' ? 'English' : selectedLanguage === 'hi' ? 'हिन्दी' : selectedLanguage === 'mr' ? 'मराठी' : 'English'}</span>
@@ -173,7 +411,7 @@ function MainInterface({ onNavigate }) {
         </div>
 
         {/* Bottom Half (Solid White) */}
-        <div className="white-overlay-card white-bottom-section">
+        <div className="white-overlay-card white-bottom-section" style={{display: 'none'}}>
 
           {/* Center Straddling Input Box */}
           <div className="input-straddle-container">
@@ -270,7 +508,37 @@ function MainInterface({ onNavigate }) {
                     </div>
                   </div>
                 ))}
-                {isTyping && <TypingIndicator agentName="Milan AI" />}
+                {isTyping && (
+                  <div className="message-row message-row-agent">
+                    <div className="agent-bubble" style={{ minWidth: '220px' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#ea580c', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="rotating-gear"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        Main AI Thinking...
+                      </div>
+                      {activeAgent ? (
+                        <div className="agent-visualization">
+                          <div className="agent-assigned-badge">
+                            <span className="agent-check">✓</span> Task identified
+                          </div>
+                          <div className="agent-handoff">
+                            Routing to <strong>{activeAgent.name}</strong>...
+                            {activeAgent.type === 'medical' && ' 🏥'}
+                            {activeAgent.type === 'navigation' && ' 🗺️'}
+                            {activeAgent.type === 'lost-and-found' && ' 🔍'}
+                          </div>
+                          <TypingIndicator />
+                        </div>
+                      ) : (
+                        <div className="agent-visualization">
+                          <div style={{ color: '#6b7280', fontSize: '0.85rem', fontStyle: 'italic', marginBottom: '8px' }}>
+                            Analyzing your request...
+                          </div>
+                          <TypingIndicator />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
                 <div ref={bottomRef} />
               </div>
             </div>

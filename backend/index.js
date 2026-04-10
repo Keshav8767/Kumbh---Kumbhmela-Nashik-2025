@@ -32,7 +32,9 @@ io.on('connection', (socket) => {
     console.log('User language:', data.userLanguage);
     
     try {
-      const result = await handleMessage(data.message, data.userLocation, data.userLanguage);
+      const result = await handleMessage(data.message, data.userLocation, data.userLanguage, (agentData) => {
+        socket.emit('agent-thinking', agentData);
+      });
       console.log('Sending reply:', result.agent, '-', result.reply?.substring(0, 50));
       socket.emit('agent-reply', result);
     } catch (error) {

@@ -9,27 +9,29 @@ export const useSocket = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [lastPong, setLastPong] = useState(null);
   const [lastReply, setLastReply] = useState(null);
+  const [activeAgent, setActiveAgent] = useState(null);
 
   useEffect(() => {
     const socketInstance = io(SOCKET_URL);
 
     socketInstance.on('connect', () => {
-      console.log('Socket connected:', socketInstance.id);
       setIsConnected(true);
     });
 
     socketInstance.on('disconnect', () => {
-      console.log('Socket disconnected');
       setIsConnected(false);
     });
 
     socketInstance.on('test-pong', (data) => {
-      console.log('Received test-pong:', data);
       setLastPong(data);
     });
 
+    socketInstance.on('agent-thinking', (data) => {
+      setActiveAgent(data);
+    });
+
     socketInstance.on('agent-reply', (data) => {
-      console.log('Agent reply:', data);
+      setActiveAgent(null);
       setLastReply(data);
     });
 
@@ -42,14 +44,12 @@ export const useSocket = () => {
 
   const sendPing = useCallback(() => {
     if (socket) {
-      console.log('Sending test-ping...');
       socket.emit('test-ping');
     }
   }, [socket]);
 
   const sendMessage = useCallback((text, userLocation = null, userLanguage = 'en') => {
     if (socket) {
-      console.log('Sending user message:', text);
       socket.emit('user-message', { message: text, userLocation, userLanguage });
     }
   }, [socket]);
@@ -59,6 +59,7 @@ export const useSocket = () => {
     isConnected,
     lastPong,
     lastReply,
+    activeAgent,
     sendPing,
     sendMessage,
   };
