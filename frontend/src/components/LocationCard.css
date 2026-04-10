@@ -1,0 +1,85 @@
+.location-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+
+.location-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.location-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #1f2937;
+}
+
+.distance {
+  background: #fff7ed;
+  color: #ea580c;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.location-address {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.location-type {
+  display: inline-block;
+  background: #f3f4f6;
+  color: #4b5563;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  margin-top: 8px;
+  text-transform: capitalize;
+}
+
+.location-price {
+  margin: 8px 0 4px 0;
+  font-size: 0.95rem;
+  color: #059669;
+  font-weight: 600;
+}
+
+.location-rating {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #f59e0b;
+  font-weight: 500;
+}
+
+.location-rooms {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.location-contact {
+  display: inline-block;
+  margin-top: 8px;
+  color: #ea580c;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.location-contact:hover {
+  text-decoration: underline;
+}
